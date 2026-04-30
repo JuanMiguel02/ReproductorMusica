@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+
+<AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="demo.demo.viewController.MusicPlayerViewController" stylesheets="@styles/styles.css">
+   <children>
+      <BorderPane layoutX="150.0" layoutY="100.0" prefHeight="600.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <left>
+            <VBox prefHeight="555.0" prefWidth="200.0" styleClass="nav-form" BorderPane.alignment="CENTER">
+               <children>
+                  <VBox alignment="CENTER" prefHeight="150.0" prefWidth="200.0">
+                     <children>
+                        <Label text="Reproductor" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Label>
+                        <Label text="Musical" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
+                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" styleClass="nav-btn" text="Inicio" />
+                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" styleClass="nav-btn" text="Biblioteca" />
+                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" styleClass="nav-btn" text="Playlists" />
+                  <Region VBox.vgrow="ALWAYS" />
+                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="180.0" styleClass="logout" text="Cerrar Sesión">
+                     <VBox.margin>
+                        <javafx.geometry.Insets bottom="10.0" left="10.0" />
+                     </VBox.margin>
+                  </Button>
+               </children>
+            </VBox>
+         </left>
+         <center>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="white-bg" BorderPane.alignment="CENTER">
+               <children>
+                  <VBox layoutX="14.0" layoutY="14.0" prefHeight="532.0" prefWidth="672.0" spacing="10.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="200.0" spacing="10.0">
+                           <children>
+                              <TextField prefHeight="30.0" prefWidth="250.0" promptText="Buscar canción..." styleClass="search" />
+                           </children>
+                        </HBox>
+                        <TableView fx:id="songTable" prefHeight="350.0" prefWidth="672.0" VBox.vgrow="ALWAYS">
+                          <columns>
+                            <TableColumn fx:id="colTitle" prefWidth="250.0" text="Título" />
+                            <TableColumn fx:id="colArtist" prefWidth="200.0" text="Artista" />
+                              <TableColumn fx:id="colDuration" prefWidth="100.0" text="Duración" />
+                          </columns>
+                        </TableView>
+                        <HBox alignment="CENTER" prefHeight="60.0" prefWidth="200.0" spacing="20.0">
+                           <children>
+                              <Button mnemonicParsing="false" prefHeight="35.0" prefWidth="100.0" styleClass="add-btn" text="Agregar" />
+                              <Button mnemonicParsing="false" prefHeight="35.0" prefWidth="100.0" styleClass="update-btn" text="Actualizar" />
+                              <Button mnemonicParsing="false" prefHeight="35.0" prefWidth="100.0" styleClass="delete-btn" text="Eliminar" />
+                              <Button mnemonicParsing="false" prefHeight="35.0" prefWidth="100.0" styleClass="clear-btn" text="Limpiar" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+            </AnchorPane>
+         </center>
+         <top>
+            <AnchorPane prefHeight="35.0" prefWidth="900.0" styleClass="top-form" BorderPane.alignment="CENTER">
+               <children>
+                  <Label layoutX="14.0" layoutY="9.0" text="Music Player v1.0" />
+                  <Button layoutX="854.0" layoutY="5.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="40.0" styleClass="close" text="X" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="2.0" />
+                  <Button layoutX="814.0" layoutY="5.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="40.0" styleClass="minimize" text="-" AnchorPane.rightAnchor="42.0" AnchorPane.topAnchor="2.0" />
+               </children>
+            </AnchorPane>
+         </top>
+         <bottom>
+            <AnchorPane prefHeight="80.0" prefWidth="900.0" styleClass="semi-top-form" BorderPane.alignment="CENTER">
+               <children>
+                  <HBox alignment="CENTER" layoutX="350.0" layoutY="15.0" prefHeight="50.0" prefWidth="200.0" spacing="15.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="15.0">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#previousSong" style="-fx-background-color: transparent; -fx-text-fill: black;" text="⏮" />
+                        <Button mnemonicParsing="false" styleClass="add-btn" text="▶" />
+                        <Button mnemonicParsing="false" onAction="#nextSong" style="-fx-background-color: transparent; -fx-text-fill: black;" text="⏭" />
+                     </children>
+                  </HBox>
+                  <ProgressBar layoutX="250.0" layoutY="60.0" prefWidth="400.0" progress="0.4" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="250.0" />
+                  <Label fx:id="lblCurrentSong" layoutX="25.0" layoutY="15.0" text="Reproduciendo: Canción Desconocida">
+                     <font>
+                        <Font name="System Italic" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lblState" layoutX="25.0" layoutY="35.0" text="Estado" textFill="#5e5e5e">
+                     <font>
+                        <Font size="12.0" />
+                     </font>
+                  </Label>
+               </children>
+            </AnchorPane>
+         </bottom>
+      </BorderPane>
+   </children>
+</AnchorPane>
