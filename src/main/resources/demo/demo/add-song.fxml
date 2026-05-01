@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="400.0" stylesheets="@styles/styles.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="demo.demo.viewController.AddSongViewController">
+    <children>
+        <VBox layoutX="20.0" layoutY="20.0" prefHeight="360.0" prefWidth="360.0" spacing="20.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+            <children>
+                <Label text="Añadir Nueva Canción" textFill="BLACK">
+                    <font>
+                        <Font name="System Bold" size="18.0" />
+                    </font>
+                </Label>
+                <GridPane hgap="10.0" vgap="15.0">
+                    <children>
+                        <Label text="Título:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                        <TextField fx:id="txtTitle" promptText="Nombre de la canción" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                        
+                        <Label text="Artista:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                        <TextField fx:id="txtArtist" promptText="Nombre del artista" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        
+                        <Label text="Álbum:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                        <TextField fx:id="txtAlbum" promptText="Nombre del álbum" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                        <Label text="Archivo:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                        <HBox spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                            <children>
+                                <TextField fx:id="txtFilePath" editable="false" promptText="Ningún archivo seleccionado" HBox.hgrow="ALWAYS" />
+                                <Button mnemonicParsing="false" onAction="#onSelectFile" text="Examinar..." />
+                            </children>
+                        </HBox>
+                    </children>
+               <columnConstraints>
+                  <ColumnConstraints />
+                  <ColumnConstraints />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+               </rowConstraints>
+                </GridPane>
+                <HBox alignment="CENTER_RIGHT" spacing="10.0">
+                    <children>
+                        <Button mnemonicParsing="false" onAction="#onCancel" styleClass="delete-btn" text="Cancelar" />
+                        <Button mnemonicParsing="false" onAction="#onSave" styleClass="add-btn" text="Guardar" />
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>

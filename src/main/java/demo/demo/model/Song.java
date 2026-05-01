@@ -53,6 +53,12 @@ public class Song {
         this.duration = duration;
     }
 
+    public String getDurationFormatted(){
+        long minutes = duration.toMinutes();
+        long seconds = duration.getSeconds() % 60;
+        return String.format("%02d:%02d", minutes, seconds);
+    }
+
     @Override
     public String toString() {
         return name + " - " + artist + " - " + album;

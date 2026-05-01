@@ -4,17 +4,24 @@ import demo.demo.model.HistoryLog;
 import demo.demo.model.Playlist;
 import demo.demo.model.Song;
 import demo.demo.model.SongIterator;
+import demo.demo.repository.SongRepository;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.Locale;
+import java.util.Objects;
 
 public class MusicPlayerViewController {
 
@@ -61,17 +68,26 @@ public class MusicPlayerViewController {
         playlist = new Playlist();
         historyLog = new HistoryLog();
 
-        Song song1 = new Song("Song 1", "Artist 1", "Album 1", Duration.ofMinutes(3));
-        song1.setFilePath("src/main/resources/music/TheAdultsAreTalking.mp3");
+        // Cargar canciones desde el repositorio
+        playlist.getSongs().addAll(SongRepository.getInstance().getSongs());
 
-        Song song2 = new Song("Song 2", "Artist 2", "Album 2", Duration.ofMinutes(3));
-        song2.setFilePath("src/main/resources/music/BeautySchool.mp3");
+        // Si el repositorio está vacío, añadir algunas por defecto (opcional)
+        if (playlist.getSongs().isEmpty()) {
+            Song song1 = new Song("Song 1", "Artist 1", "Album 1", Duration.ofMinutes(3));
+            song1.setFilePath("src/main/resources/music/TheAdultsAreTalking.mp3");
 
-        playlist.addSong(song1);
-        playlist.addSong(song2);
-        playlist.addSong(new Song("Song 3", "Artist 3", "Album 3", Duration.ofMinutes(3)));
+            Song song2 = new Song("Song 2", "Artist 2", "Album 2", Duration.ofMinutes(3));
+            song2.setFilePath("src/main/resources/music/BeautySchool.mp3");
+
+            SongRepository.getInstance().addSong(song1);
+            SongRepository.getInstance().addSong(song2);
+            
+            playlist.addSong(song1);
+            playlist.addSong(song2);
+        }
 
         songIterator = playlist.createIterator();
+
         if (songIterator.hasNext()) {
             currentSong = songIterator.getNext();
         }
@@ -88,12 +104,32 @@ public class MusicPlayerViewController {
         colArtist.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getArtist()));
         colTitle.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getName()));
         colAlbum.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getAlbum()));
-        colDuration.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getDuration().toString()));
+        colDuration.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getDurationFormatted()));
     }
 
     private void loadTable(){
         songTable.getItems().clear();
+        // Asegurarnos de que playlist tenga lo último del repositorio
+        playlist.getSongs().clear();
+        playlist.getSongs().addAll(SongRepository.getInstance().getSongs());
         songTable.getItems().addAll(playlist.getSongs());
+    }
+
+    @FXML
+    private void addSong() {
+        try {
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/demo/demo/add-song.fxml")));
+            Stage stage = new Stage();
+            stage.setTitle("Añadir Canción");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+            
+            // Recargar la tabla después de cerrar el formulario
+            loadTable();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
