@@ -7,6 +7,9 @@ public class HistoryLog implements SongCollection{
     private Stack<Song> stackHistory = new Stack<>();
 
     public void registerSong(Song song) {
+        if(!stackHistory.isEmpty() && stackHistory.peek().equals(song)){
+            return;
+        }
         stackHistory.push(song);
     }
 

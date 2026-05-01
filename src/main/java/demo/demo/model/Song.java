@@ -8,12 +8,21 @@ public class Song {
     private String artist;
     private String album;
     private Duration duration;
+    private String filePath;
 
     public Song(String name, String artist, String album, Duration duration) {
         this.name = name;
         this.artist = artist;
         this.album = album;
         this.duration = duration;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 
     public String getName() {

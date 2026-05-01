@@ -182,3 +182,19 @@
 .chart-bar {
     -fx-bar-fill: #3498db;
 }
+
+.slider .thumb {
+    -fx-background-color: #3498db;
+    -fx-background-radius: 10;
+    -fx-padding: 5;
+}
+
+.slider .track {
+    -fx-background-color: #99a2a9;
+    -fx-background-radius: 5;
+    -fx-background-insets: 0;
+}
+
+.slider:hover .thumb {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 5,0,0,0);
+}
