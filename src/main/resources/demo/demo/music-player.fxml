@@ -118,7 +118,7 @@
                            </font></Button>
                      </children>
                   </HBox>
-                  <Slider fx:id="sdProgress" layoutX="305.0" layoutY="66.0" prefHeight="14.0" prefWidth="318.0" stylesheets="@styles/styles.css" />
+                  <Slider fx:id="sdProgress" layoutX="291.0" layoutY="67.0" prefHeight="14.0" prefWidth="318.0" stylesheets="@styles/styles.css" />
                   <Label fx:id="lblCurrentSong" layoutX="25.0" layoutY="15.0" text="Reproduciendo: Canción Desconocida">
                      <font>
                         <Font name="System Italic" size="14.0" />
@@ -129,6 +129,7 @@
                         <Font size="12.0" />
                      </font>
                   </Label>
+                  <Label fx:id="lblTime" layoutX="617.0" layoutY="66.0" text="00:00" />
                </children>
             </AnchorPane>
          </bottom>

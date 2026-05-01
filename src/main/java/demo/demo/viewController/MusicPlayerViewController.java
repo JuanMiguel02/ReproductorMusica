@@ -22,7 +22,6 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.Duration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -30,6 +29,10 @@ import java.util.Objects;
 import static demo.demo.services.AlertService.showAlert;
 import static demo.demo.services.AlertService.showErrorAlert;
 
+/**
+ * Controlador principal de la vista del reproductor de música.
+ * Gestiona la reproducción, lista de canciones, historial y controles de usuario.
+ */
 public class MusicPlayerViewController {
 
     @FXML
@@ -68,6 +71,9 @@ public class MusicPlayerViewController {
     @FXML
     private TextField txtFilter;
 
+    @FXML
+    private Label lblTime;
+
     private Playlist playlist;
     private HistoryLog historyLog;
 
@@ -78,6 +84,10 @@ public class MusicPlayerViewController {
     private final MusicPlayerController musicPlayerController = new MusicPlayerController();
 
 
+    /**
+     * Inicializa el controlador, configura la lista de canciones, el historial
+     * y los listeners de la interfaz.
+     */
     public void initialize() {
         playlist = new Playlist();
         historyLog = new HistoryLog();
@@ -113,6 +123,9 @@ public class MusicPlayerViewController {
         }
     }
 
+    /**
+     * Configura las columnas de la tabla de canciones.
+     */
     private void initializeTable(){
         colArtist.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getArtist()));
         colTitle.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getName()));
@@ -120,6 +133,9 @@ public class MusicPlayerViewController {
         colDuration.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getDurationFormatted()));
     }
 
+    /**
+     * Carga las canciones del repositorio en la tabla y en la lista de reproducción.
+     */
     private void loadTable(){
         songTable.getItems().clear();
         // Asegurarnos de que playlist tenga lo último del repositorio
@@ -128,6 +144,9 @@ public class MusicPlayerViewController {
         songTable.getItems().addAll(playlist.getSongs());
     }
 
+    /**
+     * Abre la ventana para añadir una nueva canción.
+     */
     @FXML
     private void addSong() {
         try {
@@ -145,7 +164,9 @@ public class MusicPlayerViewController {
         }
     }
 
-    //El método determina si el botón pausa o reproduce la canción
+    /**
+     * Gestiona la acción de reproducir o pausar la canción actual.
+     */
     @FXML
     private void handlePlayPause(){
         if(mediaPlayer != null && mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING){
@@ -157,6 +178,10 @@ public class MusicPlayerViewController {
         }
     }
 
+    /**
+     * Reproduce la canción seleccionada actualmente.
+     * Crea un nuevo {@link MediaPlayer} si es necesario.
+     */
     private void playSelectedSong(){
        if (currentSong == null) return;
 
@@ -193,6 +218,9 @@ public class MusicPlayerViewController {
        }
     }
 
+    /**
+     * Pausa la reproducción actual y actualiza el estado de la interfaz.
+     */
     private void pauseSong(){
         if(mediaPlayer != null){
             mediaPlayer.pause();
@@ -203,6 +231,10 @@ public class MusicPlayerViewController {
         updatePlayerLabels("Pausado");
     }
 
+    /**
+     * Avanza a la siguiente canción en la lista de reproducción.
+     * Registra la canción actual en el historial.
+     */
     @FXML
     private void nextSong() {
         if(songIterator.hasNext()){
@@ -221,6 +253,9 @@ public class MusicPlayerViewController {
 
     }
 
+    /**
+     * Retrocede a la canción anterior utilizando el iterador.
+     */
     @FXML
     private void previousSong() {
        if(songIterator.hasPrevious()){
@@ -237,6 +272,9 @@ public class MusicPlayerViewController {
        }
     }
     
+    /**
+     * Actualiza la lista visual del historial de reproducción.
+     */
     private void refreshHistoryUI(){
         listHistory.getItems().clear();
 
@@ -249,6 +287,10 @@ public class MusicPlayerViewController {
     }
 
 
+    /**
+     * Actualiza las etiquetas de texto de la interfaz con el estado actual.
+     * @param state Estado actual de la reproducción.
+     */
     private void updatePlayerLabels(String state){
 
         if (lblState != null) lblState.setText(state);
@@ -258,12 +300,19 @@ public class MusicPlayerViewController {
         }
     }
 
+    /**
+     * Configura los listeners para sincronizar la barra de progreso con el audio.
+     */
     private void updateProgressBar(){
       mediaPlayer.setOnReady(() -> sdProgress.setMax(mediaPlayer.getTotalDuration().toSeconds()));
 
       mediaPlayer.currentTimeProperty().addListener((observable, oldValue, newValue) -> {
           double total = mediaPlayer.getTotalDuration().toSeconds();
           double current = newValue.toSeconds();
+
+          if(lblTime != null){
+              lblTime.setText(formatTime(current));
+          }
 
           if(total > 0){
               double percentage = (current / total) * 100;
@@ -277,7 +326,6 @@ public class MusicPlayerViewController {
               if(track != null){
                   track.setStyle(style);
               }
-
 
               if(!sdProgress.isValueChanging()){
                   sdProgress.setValue(current);
@@ -294,6 +342,9 @@ public class MusicPlayerViewController {
 
     }
 
+    /**
+     * Elimina la canción seleccionada en la tabla tras confirmación del usuario.
+     */
     @FXML
     private void deleteSong() {
         Song selectedSong = songTable.getSelectionModel().getSelectedItem();
@@ -303,13 +354,13 @@ public class MusicPlayerViewController {
             return;
         }
 
-        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmacion.setTitle("Confirmar eliminación");
-        confirmacion.setHeaderText("¿Está seguro que desea eliminar este recinto?");
-        confirmacion.setContentText("Recinto: " + selectedSong.getName() + " - " + selectedSong.getArtist());
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmation.setTitle("Confirmar eliminación");
+        confirmation.setHeaderText("¿Está seguro que desea eliminar este recinto?");
+        confirmation.setContentText("Recinto: " + selectedSong.getName() + " - " + selectedSong.getArtist());
 
-        confirmacion.showAndWait().ifPresent(respuesta ->{
-            if(respuesta == ButtonType.OK){
+        confirmation.showAndWait().ifPresent(response ->{
+            if(response == ButtonType.OK){
                 if(musicPlayerController.removeSong(selectedSong)){
                     loadTable();
                     showAlert("Éxito", "Recinto Eliminado Éxitosamente", Alert.AlertType.INFORMATION  );
@@ -319,15 +370,35 @@ public class MusicPlayerViewController {
         });
     }
 
+    /**
+     * Cierra la aplicación.
+     */
     @FXML
     public void close(){
         System.exit(0);
     }
 
+    /**
+     * Minimiza la ventana de la aplicación.
+     */
     @FXML
     public void minimize() {
         Stage stage = (Stage) centralContent.getScene().getWindow();
         stage.setIconified(true);
 
+    }
+
+    /**
+     * Formatea segundos a una cadena con formato mm:ss.
+     * @param totalSeconds Segundos totales.
+     * @return Cadena formateada.
+     */
+    private String formatTime(double totalSeconds){
+        if(Double.isNaN(totalSeconds) || totalSeconds < 0){
+            return "00:00";
+        }
+        int minutes = (int) (totalSeconds / 60);
+        int seconds = (int) (totalSeconds % 60);
+        return String.format("%02d:%02d", minutes, seconds);
     }
 }

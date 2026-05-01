@@ -2,7 +2,6 @@ package demo.demo.viewController;
 
 import demo.demo.controller.MusicPlayerController;
 import demo.demo.model.Song;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
@@ -17,6 +16,10 @@ import java.time.Duration;
 import static demo.demo.services.AlertService.showAlert;
 import static demo.demo.services.AlertService.showErrorAlert;
 
+/**
+ * Controlador de la vista para añadir una nueva canción.
+ * Gestiona el formulario y la selección de archivos de audio.
+ */
 public class AddSongViewController {
 
     @FXML
@@ -25,13 +28,16 @@ public class AddSongViewController {
     private TextField txtArtist;
     @FXML
     private TextField txtAlbum;
-
     @FXML
     private TextField txtFilePath;
 
     private final MusicPlayerController musicPlayerController = new MusicPlayerController();
     private double detectedSeconds = 0;
 
+    /**
+     * Se ejecuta al pulsar el botón "Guardar".
+     * Valida los campos y añade la canción al sistema.
+     */
     @FXML
     private void onSave() {
         String title = txtTitle.getText();
@@ -60,6 +66,10 @@ public class AddSongViewController {
         }
     }
 
+    /**
+     * Se ejecuta al pulsar el botón "Seleccionar Archivo".
+     * Abre un selector de archivos y detecta la duración del audio seleccionado.
+     */
     @FXML
     private void onSelectFile() {
         FileChooser fileChooser = new FileChooser();
@@ -88,11 +98,20 @@ public class AddSongViewController {
         }
     }
 
+    /**
+     * Se ejecuta al pulsar el botón "Cancelar".
+     * Cierra la ventana sin guardar cambios.
+     */
     @FXML
     void onCancel() {
         closeWindow();
     }
 
+    /**
+     * Formatea un valor en segundos a una cadena con formato mm:ss.
+     * @param totalSeconds Segundos totales.
+     * @return Cadena formateada.
+     */
     private String formatTime(double totalSeconds){
         if(Double.isNaN(totalSeconds) || totalSeconds < 0){
             return "00:00";
@@ -102,6 +121,9 @@ public class AddSongViewController {
         return String.format("%02d:%02d", minutes, seconds);
     }
 
+    /**
+     * Cierra la ventana actual.
+     */
     private void closeWindow() {
         Stage stage = (Stage) txtTitle.getScene().getWindow();
         stage.close();

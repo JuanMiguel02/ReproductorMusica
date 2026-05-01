@@ -10,13 +10,23 @@ import javafx.stage.StageStyle;
 import java.io.IOException;
 import java.util.Objects;
 
-public class HelloApplication extends Application {
+/**
+ * Clase principal de la aplicación que inicia la interfaz gráfica del reproductor de música.
+ * Gestiona la carga de la vista inicial y el comportamiento de la ventana (arrastrar, transparencia).
+ */
+public class App extends Application {
     private double x =0;
     private double y = 0;
 
+    /**
+     * Punto de entrada principal de la aplicación JavaFX.
+     * Configura la escena, carga el archivo FXML y define eventos de ratón para la ventana.
+     * @param stage El escenario principal de la aplicación.
+     * @throws IOException Si ocurre un error al cargar el archivo FXML.
+     */
     @Override
     public void start(Stage stage) throws IOException {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(HelloApplication.class.getResource("music-player.fxml")));
+        Parent root = FXMLLoader.load(Objects.requireNonNull(App.class.getResource("music-player.fxml")));
 
         Scene scene = new Scene(root, 900,600);
 
