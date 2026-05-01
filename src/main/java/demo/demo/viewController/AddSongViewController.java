@@ -14,6 +14,9 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.time.Duration;
 
+import static demo.demo.services.AlertService.showAlert;
+import static demo.demo.services.AlertService.showErrorAlert;
+
 public class AddSongViewController {
 
     @FXML
@@ -27,7 +30,6 @@ public class AddSongViewController {
     private TextField txtFilePath;
 
     private final MusicPlayerController musicPlayerController = new MusicPlayerController();
-
     private double detectedSeconds = 0;
 
     @FXML
@@ -38,23 +40,23 @@ public class AddSongViewController {
         String filePath = txtFilePath.getText();
 
         if (title.isEmpty() || artist.isEmpty() || album.isEmpty() || filePath.isEmpty()) {
-            showAlert("Error", "Todos los campos son obligatorios, incluyendo el archivo.");
+            showErrorAlert( "Todos los campos son obligatorios, incluyendo el archivo.");
             return;
         }
 
         try {
             Song newSong = new Song(title, artist, album, Duration.ofSeconds((long)detectedSeconds));
             newSong.setFilePath(filePath);
-            boolean success = musicPlayerController.addSong(newSong);
-            
-            if (success) {
-                showAlert("Éxito", "Canción añadida correctamente.");
+
+            if(musicPlayerController.addSong(newSong)){
+                showAlert("Éxito", "Canción añadida correctamente.", Alert.AlertType.INFORMATION);
                 closeWindow();
-            } else {
-                showAlert("Error", "No se pudo añadir la canción.");
+            }else{
+                showErrorAlert("No se pudo añadir la canción.");
             }
-        } catch (NumberFormatException e) {
-            showAlert("Error", "La duración debe ser un número (segundos).");
+
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
         }
     }
 
@@ -98,14 +100,6 @@ public class AddSongViewController {
         int minutes = (int) (totalSeconds / 60);
         int seconds = (int) (totalSeconds % 60);
         return String.format("%02d:%02d", minutes, seconds);
-    }
-
-    private void showAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
     }
 
     private void closeWindow() {

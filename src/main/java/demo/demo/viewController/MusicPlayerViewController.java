@@ -1,5 +1,6 @@
 package demo.demo.viewController;
 
+import demo.demo.controller.MusicPlayerController;
 import demo.demo.model.HistoryLog;
 import demo.demo.model.Playlist;
 import demo.demo.model.Song;
@@ -16,12 +17,18 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.kordamp.ikonli.antdesignicons.AntDesignIconsOutlined;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+
+import static demo.demo.services.AlertService.showAlert;
+import static demo.demo.services.AlertService.showErrorAlert;
 
 public class MusicPlayerViewController {
 
@@ -55,6 +62,12 @@ public class MusicPlayerViewController {
     @FXML
     private AnchorPane centralContent;
 
+    @FXML
+    private FontIcon iconButtonPlay;
+
+    @FXML
+    private TextField txtFilter;
+
     private Playlist playlist;
     private HistoryLog historyLog;
 
@@ -62,6 +75,7 @@ public class MusicPlayerViewController {
     private Song currentSong;
 
     private MediaPlayer mediaPlayer;
+    private final MusicPlayerController musicPlayerController = new MusicPlayerController();
 
 
     public void initialize() {
@@ -71,21 +85,6 @@ public class MusicPlayerViewController {
         // Cargar canciones desde el repositorio
         playlist.getSongs().addAll(SongRepository.getInstance().getSongs());
 
-        // Si el repositorio está vacío, añadir algunas por defecto (opcional)
-        if (playlist.getSongs().isEmpty()) {
-            Song song1 = new Song("Song 1", "Artist 1", "Album 1", Duration.ofMinutes(3));
-            song1.setFilePath("src/main/resources/music/TheAdultsAreTalking.mp3");
-
-            Song song2 = new Song("Song 2", "Artist 2", "Album 2", Duration.ofMinutes(3));
-            song2.setFilePath("src/main/resources/music/BeautySchool.mp3");
-
-            SongRepository.getInstance().addSong(song1);
-            SongRepository.getInstance().addSong(song2);
-            
-            playlist.addSong(song1);
-            playlist.addSong(song2);
-        }
-
         songIterator = playlist.createIterator();
 
         if (songIterator.hasNext()) {
@@ -94,6 +93,20 @@ public class MusicPlayerViewController {
 
         initializeTable();
         loadTable();
+
+        txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
+            List<Song> filteredSongs = musicPlayerController.filterSongs(playlist.getSongs(), newValue);
+            songTable.getItems().clear();
+            songTable.getItems().addAll(filteredSongs);
+
+            Playlist temporaryPlaylist = new Playlist();
+            temporaryPlaylist.getSongs().addAll(filteredSongs);
+            songIterator = temporaryPlaylist.createIterator();
+
+            if(songIterator.hasNext()){
+                currentSong = songIterator.getNext();
+            }
+        });
 
         if (currentSong != null) {
             updatePlayerLabels("Listo");
@@ -128,30 +141,66 @@ public class MusicPlayerViewController {
             // Recargar la tabla después de cerrar el formulario
             loadTable();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 
+    //El método determina si el botón pausa o reproduce la canción
     @FXML
-    private void playSelectedSong(){
-        if(currentSong != null){
-            if(mediaPlayer != null){
-                mediaPlayer.stop();
-            }
-            try{
-                File file = new File(currentSong.getFilePath());
-                Media media = new Media(file.toURI().toString());
-                mediaPlayer = new MediaPlayer(media);
-
-                updateProgressBar();
-
-                mediaPlayer.play();
-
-                mediaPlayer.setOnEndOfMedia(this::nextSong);
-            } catch (Exception e) {
-                System.err.println("No se pudo reproducir: " + currentSong.getFilePath());
-            }
+    private void handlePlayPause(){
+        if(mediaPlayer != null && mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING){
+            pauseSong();
+            iconButtonPlay.setIconCode(AntDesignIconsOutlined.PLAY_CIRCLE);
+        }else{
+            playSelectedSong();
+            iconButtonPlay.setIconCode(AntDesignIconsOutlined.PAUSE_CIRCLE);
         }
+    }
+
+    private void playSelectedSong(){
+       if (currentSong == null) return;
+
+        //Preguntar si existe el reproductor y es la misma canción
+       if(mediaPlayer != null && mediaPlayer.getMedia().getSource().equals(new File(currentSong.getFilePath()).toURI().toString())){
+           //Si estaba pausado, play() lo reanuda desde donde estaba
+           if(mediaPlayer.getStatus() == MediaPlayer.Status.PAUSED){
+               mediaPlayer.play();
+               updatePlayerLabels("Reanudando");
+           }
+           return; //Se sale del método para no crear un reproductor nuevo
+       }
+
+       //Si es una canción diferente o el reproductor no existe, entonces se crea un nuevo reproductor
+       if(mediaPlayer != null){
+           mediaPlayer.stop();
+           mediaPlayer.dispose();
+       }
+       try{
+           //Crear el reproductor a partir del archivo de la canción
+           File file = new File(currentSong.getFilePath());
+           Media media = new Media(file.toURI().toString());
+           mediaPlayer = new MediaPlayer(media);
+           //Método para actualizar el slider
+           updateProgressBar();
+
+           mediaPlayer.play();
+           //reproducir la siguiente canción cuando termine
+           mediaPlayer.setOnEndOfMedia(this::nextSong);
+
+           updatePlayerLabels("Reproduciendo nueva cancuón");
+       } catch (Exception e) {
+           System.err.println("No se pudo reproducir" + e.getMessage());
+       }
+    }
+
+    private void pauseSong(){
+        if(mediaPlayer != null){
+            mediaPlayer.pause();
+        }
+        if(sdProgress != null){
+            sdProgress.setValue(mediaPlayer != null ? mediaPlayer.getCurrentTime().toSeconds() : 0);
+        }
+        updatePlayerLabels("Pausado");
     }
 
     @FXML
@@ -162,6 +211,7 @@ public class MusicPlayerViewController {
             }
             currentSong = songIterator.getNext();
             playSelectedSong();
+            iconButtonPlay.setIconCode(AntDesignIconsOutlined.PAUSE_CIRCLE);
             updatePlayerLabels("Reproduciendo siguiente");
             refreshHistoryUI();
         }else{
@@ -179,6 +229,7 @@ public class MusicPlayerViewController {
            }
            currentSong = songIterator.getPrevious();
            playSelectedSong();
+           iconButtonPlay.setIconCode(AntDesignIconsOutlined.PAUSE_CIRCLE);
            updatePlayerLabels("Reproduciendo anterior");
            refreshHistoryUI();
        }else{
@@ -202,15 +253,13 @@ public class MusicPlayerViewController {
 
         if (lblState != null) lblState.setText(state);
         if (currentSong != null) {
-            if (lblCurrentSong != null) lblCurrentSong.setText("Reproduciendo: " + currentSong.toString());
+            if (lblCurrentSong != null) lblCurrentSong.setText("Reproduciendo: " + currentSong);
             System.out.println(state + ": " + currentSong.toString());
         }
     }
 
     private void updateProgressBar(){
-      mediaPlayer.setOnReady(() ->{
-          sdProgress.setMax(mediaPlayer.getTotalDuration().toSeconds());
-      });
+      mediaPlayer.setOnReady(() -> sdProgress.setMax(mediaPlayer.getTotalDuration().toSeconds()));
 
       mediaPlayer.currentTimeProperty().addListener((observable, oldValue, newValue) -> {
           double total = mediaPlayer.getTotalDuration().toSeconds();
@@ -243,6 +292,31 @@ public class MusicPlayerViewController {
           }
       });
 
+    }
+
+    @FXML
+    private void deleteSong() {
+        Song selectedSong = songTable.getSelectionModel().getSelectedItem();
+
+        if(selectedSong == null){
+            showErrorAlert("Por favor seleccione un recinto para eliminar");
+            return;
+        }
+
+        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacion.setTitle("Confirmar eliminación");
+        confirmacion.setHeaderText("¿Está seguro que desea eliminar este recinto?");
+        confirmacion.setContentText("Recinto: " + selectedSong.getName() + " - " + selectedSong.getArtist());
+
+        confirmacion.showAndWait().ifPresent(respuesta ->{
+            if(respuesta == ButtonType.OK){
+                if(musicPlayerController.removeSong(selectedSong)){
+                    loadTable();
+                    showAlert("Éxito", "Recinto Eliminado Éxitosamente", Alert.AlertType.INFORMATION  );
+                }
+
+            }
+        });
     }
 
     @FXML

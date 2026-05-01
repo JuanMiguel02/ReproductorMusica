@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-<?import org.kordamp.ikonli.javafx.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<AnchorPane prefHeight="600.0" prefWidth="900.0" stylesheets="@styles/styles.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="demo.demo.viewController.MusicPlayerViewController">
+<AnchorPane prefHeight="600.0" prefWidth="900.0" stylesheets="@styles/styles.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="demo.demo.viewController.MusicPlayerViewController">
    <children>
       <BorderPane layoutX="150.0" layoutY="100.0" prefHeight="600.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <left>
@@ -37,7 +47,7 @@
                      <children>
                         <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="200.0" spacing="10.0">
                            <children>
-                              <TextField prefHeight="30.0" prefWidth="250.0" promptText="Buscar canción..." styleClass="search" />
+                              <TextField fx:id="txtFilter" prefHeight="30.0" prefWidth="250.0" promptText="Buscar canción..." styleClass="search" />
                            </children>
                         </HBox>
                         <TableView fx:id="songTable" prefHeight="350.0" prefWidth="672.0" VBox.vgrow="ALWAYS">
@@ -51,7 +61,7 @@
                         <HBox alignment="CENTER" prefHeight="60.0" prefWidth="200.0" spacing="20.0">
                            <children>
                               <Button mnemonicParsing="false" onAction="#addSong" prefHeight="35.0" prefWidth="100.0" styleClass="add-btn" text="Agregar" />
-                              <Button mnemonicParsing="false" prefHeight="35.0" prefWidth="100.0" styleClass="delete-btn" text="Eliminar" />
+                              <Button mnemonicParsing="false" onAction="#deleteSong" prefHeight="35.0" prefWidth="100.0" styleClass="delete-btn" text="Eliminar" />
                            </children>
                         </HBox>
                      </children>
@@ -98,11 +108,17 @@
                   <HBox alignment="CENTER" layoutX="350.0" layoutY="15.0" prefHeight="50.0" prefWidth="200.0" spacing="15.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="15.0">
                      <children>
                         <Button mnemonicParsing="false" onAction="#previousSong" style="-fx-background-color: transparent; -fx-text-fill: black;" text="⏮" />
-                        <Button mnemonicParsing="false" onAction="#playSelectedSong" styleClass="add-btn" text="▶" />
-                        <Button mnemonicParsing="false" onAction="#nextSong" style="-fx-background-color: transparent; -fx-text-fill: black;" text="⏭" />
+                        <Button fx:id="btnPlayPause" mnemonicParsing="false" onAction="#handlePlayPause" styleClass="add-btn">
+                           <graphic>
+                              <FontIcon fx:id="iconButtonPlay" iconColor="#dddddd" iconLiteral="anto-play-circle" iconSize="30" />
+                           </graphic></Button>
+                        <Button mnemonicParsing="false" onAction="#nextSong" prefHeight="26.0" prefWidth="32.0" style="-fx-background-color: transparent; -fx-text-fill: black;" text="⏭">
+                           <font>
+                              <Font size="26.0" />
+                           </font></Button>
                      </children>
                   </HBox>
-                  <Slider fx:id="sdProgress" layoutX="298.0" layoutY="59.0" prefHeight="14.0" prefWidth="318.0" stylesheets="@styles/styles.css" />
+                  <Slider fx:id="sdProgress" layoutX="305.0" layoutY="66.0" prefHeight="14.0" prefWidth="318.0" stylesheets="@styles/styles.css" />
                   <Label fx:id="lblCurrentSong" layoutX="25.0" layoutY="15.0" text="Reproduciendo: Canción Desconocida">
                      <font>
                         <Font name="System Italic" size="14.0" />

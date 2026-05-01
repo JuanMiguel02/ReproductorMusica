@@ -4,6 +4,9 @@ target/
 !**/src/test/**/target/
 .kotlin
 
+src/main/resources/music/*.mp3
+src/main/resources/music/*.wav
+
 ### IntelliJ IDEA ###
 .idea/modules.xml
 .idea/jarRepositories.xml
