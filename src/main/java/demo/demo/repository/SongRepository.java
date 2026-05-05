@@ -61,14 +61,18 @@ public class SongRepository {
      * Carga canciones de ejemplo al inicializar el repositorio.
      */
     private void loadSongsExampe(){
-        Song song1 = new Song("Song 1", "Artist 1", "Album 1", Duration.ofMinutes(3));
-        song1.setFilePath("src/main/resources/music/TheAdultsAreTalking.mp3");
+        Song song1 = new Song("Off Road", "Aylex", "Off Road", Duration.ofMinutes(2));
+        song1.setFilePath("src/main/resources/music/Aylex-OffRoad.mp3");
 
-        Song song2 = new Song("Song 2", "Artist 2", "Album 2", Duration.ofMinutes(3));
-        song2.setFilePath("src/main/resources/music/BeautySchool.mp3");
+        Song song2 = new Song("Drifting", "VTEMO", "Drifting", Duration.ofMinutes(2));
+        song2.setFilePath("src/main/resources/music/VTEMO-Drifting.mp3");
+
+        Song song3 = new Song("Aura Power", "Walen", "Aura Power", Duration.ofMinutes(2));
+        song3.setFilePath("src/main/resources/music/Walen-AuraPower.mp3");
 
         addSong(song1);
         addSong(song2);
+        addSong(song3);
     }
 
 }

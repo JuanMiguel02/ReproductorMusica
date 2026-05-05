@@ -17,6 +17,7 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.kordamp.ikonli.antdesignicons.AntDesignIconsOutlined;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -73,6 +74,9 @@ public class MusicPlayerViewController {
 
     @FXML
     private Label lblTime;
+
+    @FXML
+    private Button btnPlayPause;
 
     private Playlist playlist;
     private HistoryLog historyLog;
@@ -212,7 +216,7 @@ public class MusicPlayerViewController {
            //reproducir la siguiente canción cuando termine
            mediaPlayer.setOnEndOfMedia(this::nextSong);
 
-           updatePlayerLabels("Reproduciendo nueva cancuón");
+           updatePlayerLabels("Reproduciendo nueva canción");
        } catch (Exception e) {
            System.err.println("No se pudo reproducir" + e.getMessage());
        }
@@ -237,17 +241,21 @@ public class MusicPlayerViewController {
      */
     @FXML
     private void nextSong() {
+        if(currentSong != null) {
+            historyLog.registerSong(currentSong);
+            refreshHistoryUI();
+        }
         if(songIterator.hasNext()){
-            if(currentSong != null){
-                historyLog.registerSong(currentSong);
-            }
             currentSong = songIterator.getNext();
             playSelectedSong();
             iconButtonPlay.setIconCode(AntDesignIconsOutlined.PAUSE_CIRCLE);
             updatePlayerLabels("Reproduciendo siguiente");
-            refreshHistoryUI();
         }else{
-            lblState.setText("Fin de la lista");
+            pauseSong();
+            currentSong = null;
+            iconButtonPlay.setIconCode(AntDesignIconsOutlined.PLAY_CIRCLE);
+            updatePlayerLabels("Fin de la lista");
+            lblState.setText("No hay más canciones para reproducir");
             System.out.println("Fin de la lista");
         }
 
@@ -294,9 +302,12 @@ public class MusicPlayerViewController {
     private void updatePlayerLabels(String state){
 
         if (lblState != null) lblState.setText(state);
+
         if (currentSong != null) {
             if (lblCurrentSong != null) lblCurrentSong.setText("Reproduciendo: " + currentSong);
             System.out.println(state + ": " + currentSong.toString());
+        }else{
+            lblCurrentSong.setText("No hay canciones en la lista");
         }
     }
 
@@ -336,7 +347,7 @@ public class MusicPlayerViewController {
 
       sdProgress.valueProperty().addListener((observable, oldValue, newValue) -> {
           if(sdProgress.isValueChanging()){
-              mediaPlayer.seek(javafx.util.Duration.seconds(newValue.doubleValue()));
+              mediaPlayer.seek(Duration.seconds(newValue.doubleValue()));
           }
       });
 

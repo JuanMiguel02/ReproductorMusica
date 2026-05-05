@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class PlaylistIterator implements SongIterator{
 
-    private Playlist playlist;
+    private final Playlist playlist;
     private int index = 0;
 
     /**

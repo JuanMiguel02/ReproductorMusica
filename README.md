@@ -2,6 +2,19 @@
 
 Este proyecto es una aplicación de escritorio desarrollada en JavaFX que implementa un reproductor de música funcional, enfocándose en la aplicación del patrón de diseño **Iterator**.
 
+## Canciones utilizadas:
+-Music track: Off Road by Aylex
+Source: https://freetouse.com/music
+Free Background Music for Videos
+
+-Music track: Drifting by VTEMO
+Source: https://freetouse.com/music
+Background Music for Videos (Free)
+
+-Music track: Aura Power by Walen
+Source: https://freetouse.com/music
+No Copyright Music (Free Download)
+
 ## 🚀 Funcionalidades
 
 - **Reproducción de Audio:** Soporte para archivos `.mp3` y `.wav`.
