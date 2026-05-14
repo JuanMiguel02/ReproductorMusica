@@ -61,7 +61,7 @@ public class SongRepository {
      * Carga canciones de ejemplo al inicializar el repositorio.
      */
     private void loadSongsExampe(){
-        
+
         Song song1 = new Song("Off Road", "Aylex", "Off Road", Duration.ofMinutes(2));
         song1.setFilePath("src/main/resources/music/Aylex-OffRoad.mp3");
 
