@@ -78,6 +78,9 @@ public class PlaylistIterator implements SongIterator{
      */
     @Override
     public Song getPrevious() {
+
+        if(!hasPrevious()) return null;
+
         // Ajustar el índice si el último movimiento fue hacia adelante
         if(lastMoveWasNext){
             index--;
