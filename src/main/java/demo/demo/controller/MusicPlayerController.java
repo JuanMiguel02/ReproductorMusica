@@ -57,5 +57,4 @@ public class MusicPlayerController {
                         || song.getAlbum().toLowerCase().contains(lowerCaseFilter))
                 .toList();
     }
-
 }

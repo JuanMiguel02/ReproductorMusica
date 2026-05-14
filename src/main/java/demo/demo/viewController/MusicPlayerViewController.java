@@ -75,9 +75,6 @@ public class MusicPlayerViewController {
     @FXML
     private Label lblTime;
 
-    @FXML
-    private Button btnPlayPause;
-
     private Playlist playlist;
     private HistoryLog historyLog;
 
@@ -86,7 +83,7 @@ public class MusicPlayerViewController {
 
     private MediaPlayer mediaPlayer;
     private final MusicPlayerController musicPlayerController = new MusicPlayerController();
-
+    private boolean reachedEnd = false;
 
     /**
      * Inicializa el controlador, configura la lista de canciones, el historial
@@ -252,7 +249,7 @@ public class MusicPlayerViewController {
             updatePlayerLabels("Reproduciendo siguiente");
         }else{
             pauseSong();
-            currentSong = null;
+            reachedEnd = true;
             iconButtonPlay.setIconCode(AntDesignIconsOutlined.PLAY_CIRCLE);
             updatePlayerLabels("Fin de la lista");
             lblState.setText("No hay más canciones para reproducir");
@@ -266,18 +263,40 @@ public class MusicPlayerViewController {
      */
     @FXML
     private void previousSong() {
-       if(songIterator.hasPrevious()){
-           if(currentSong != null){
-               historyLog.registerSong(currentSong);
-           }
-           currentSong = songIterator.getPrevious();
-           playSelectedSong();
-           iconButtonPlay.setIconCode(AntDesignIconsOutlined.PAUSE_CIRCLE);
-           updatePlayerLabels("Reproduciendo anterior");
-           refreshHistoryUI();
-       }else{
-           lblState.setText("No hay canciones anteriores");
-       }
+
+        // Si terminó la lista, volver a reproducir la actual
+        if(reachedEnd){
+
+            reachedEnd = false;
+
+            playSelectedSong();
+
+            iconButtonPlay.setIconCode(AntDesignIconsOutlined.PAUSE_CIRCLE);
+
+            updatePlayerLabels("Reproduciendo actual");
+
+            return;
+        }
+
+        if(songIterator.hasPrevious()){
+
+            if(currentSong != null){
+                historyLog.registerSong(currentSong);
+            }
+
+            currentSong = songIterator.getPrevious();
+
+            playSelectedSong();
+
+            iconButtonPlay.setIconCode(AntDesignIconsOutlined.PAUSE_CIRCLE);
+
+            updatePlayerLabels("Reproduciendo anterior");
+
+            refreshHistoryUI();
+
+        }else{
+            lblState.setText("No hay canciones anteriores");
+        }
     }
     
     /**
@@ -301,14 +320,31 @@ public class MusicPlayerViewController {
      */
     private void updatePlayerLabels(String state){
 
-        if (lblState != null) lblState.setText(state);
-
-        if (currentSong != null) {
-            if (lblCurrentSong != null) lblCurrentSong.setText("Reproduciendo: " + currentSong);
-            System.out.println(state + ": " + currentSong.toString());
-        }else{
-            lblCurrentSong.setText("No hay canciones en la lista");
+        if(lblState != null){
+            lblState.setText(state);
         }
+
+        // Caso: playlist vacía
+        if(currentSong == null){
+            lblCurrentSong.setText("No hay canciones en la lista");
+            return;
+        }
+
+        // Caso: terminó la playlist
+        if(!songIterator.hasNext()
+                && state.equals("Fin de la lista")){
+
+            lblCurrentSong.setText("Última canción reproducida: " + currentSong);
+
+            System.out.println(state + ": " + currentSong);
+
+            return;
+        }
+
+        // Caso normal
+        lblCurrentSong.setText("Reproduciendo: " + currentSong);
+
+        System.out.println(state + ": " + currentSong);
     }
 
     /**

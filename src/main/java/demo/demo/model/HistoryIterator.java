@@ -6,7 +6,7 @@ package demo.demo.model;
  */
 public class HistoryIterator implements SongIterator{
 
-    private HistoryLog historyLog;
+    private final HistoryLog historyLog;
     private int index;
 
     /**
@@ -35,7 +35,7 @@ public class HistoryIterator implements SongIterator{
     @Override
     public Song getNext() {
         if(!hasNext()) return null;
-        return historyLog.getHistory().get(index--); //Mover el puntero hacia abjo en la pila
+        return historyLog.getHistory().get(index--); //Mover el puntero hacia abajo en la pila
     }
 
     /**
