@@ -57,6 +57,7 @@ public class PlaylistIterator implements SongIterator{
      */
     @Override
     public Song getPrevious() {
+        if(!hasPrevious()) return null;
         index -= 2;
         return playlist.getSongs().get(index++);
     }
